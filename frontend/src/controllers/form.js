@@ -1,11 +1,14 @@
 
-
+//Dependency needed for request fetch
 const fetch = require("node-fetch");
+//We will Use Http Native Node
+//const http = require('http');
 const form={};
-
 const api = "http://localhost:8080"
 
-form.sendUserCreated=async (req,res)=>{
+
+//Controller Create User
+form.sendUserCreated=async (req,res,next)=>{
 
     const pathCreateUser = api+"/users";
     //const formSignup = document.getElementById("form");//Form Element
@@ -50,7 +53,7 @@ form.sendUserCreated=async (req,res)=>{
                     console.log(userClear + " Stringify")
                     
                         try {
-                            const response = await fetch("http://localhost:8080/users", {
+                            const response = await fetch(pathCreateUser, {
 
                                 method: 'POST',
                                 body: userClear,
@@ -61,14 +64,13 @@ form.sendUserCreated=async (req,res)=>{
                             });
 
                             const json = await response.json();
-
-                            if(json.code==201)console.log("Usuario Registrado ");
-
-
-                            await console.log(`Valores ${userClear}`)
-                            res.json(userClear);
+                            //if(json.code==201)res.redirect("/home");
+                            //console.log(`Valores ${userClear}`)
+                            //res.json(userClear);
                             console.log(json);
-                            console.log(`JSON CODE : ${json.code}`);
+                            //console.log(`JSON CODE : ${json.code}`);
+                            next();
+
 
                         } catch (e) {
                         console.log(`Hay error response : ${e}`);
@@ -80,14 +82,61 @@ form.sendUserCreated=async (req,res)=>{
                         console.log(`Valores ${user} User`)
                         //alert(`Error ${e}`);
                         }                    
-//                };                     
-
-                
-                //Evento ; Elemento FORM
-        //formSignup.addEventListener('submit', handleSubmit);
-    
    
     
     }
+
+
+    //Controller Log
+form.logUser=async(req,res,next)=>{
+
+    const logUserPath = api+"/login";
+
+    const{email,password}=await req.body;
+
+    const user = await {
+        email:email,
+        password:password
+    }
+
+    const jsonObject = {
+        ...user,
+        sendToSelf: user.sendToSelf ? true : false,
+    };                   
+
+    const userClear = JSON.stringify(jsonObject);     
+    
+    console.log(userClear + " Stringify")
+    
+        try {
+            const response = await fetch(logUserPath, {
+
+                method: 'POST',
+                body: userClear,
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+            });
+
+            const json = await response.json();
+            //if(json.code==201)res.redirect("/home");
+            //console.log(`Valores ${userClear}`)
+            //res.json(userClear);
+            console.log(json);
+            //console.log(`JSON CODE : ${json.code}`);
+            //next();
+
+        }catch(e){
+
+            console.log(`Hay error response : ${e}`);
+            res.json({
+                Msg : `Error : ${e}`
+            })
+            console.log(JSON.stringify(jsonObject));           
+            
+        }
+
+}
 
 module.exports=form;

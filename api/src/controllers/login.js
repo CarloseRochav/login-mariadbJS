@@ -49,12 +49,12 @@ userController.getUsers=async (req,res)=>{
 
     try{
 
-        const users = await conn.query(getUsersSQL,(req,res)=>{
+        const users2 = await conn.query(getUsersSQL,(req,res)=>{
 
             return users;
         })
 
-        res.json({users});
+        res.json({users2});
 
     }catch(err){
 
@@ -66,7 +66,59 @@ userController.getUsers=async (req,res)=>{
     }finally {
       if (conn) return conn.end();
       }
-    
+
+}
+
+userController.logUser=async(req,res)=>{
+
+    const {email,password}=await req.body;
+
+    const sqlFindUser = 'SELECT * FROM USERS WHERE EMAIL="'+email+'" AND PASSWORD="'+password+'"';    
+
+    console.log({email,password,sqlFindUser});
+
+    const conn = await pool.getConnection();
+
+    try{
+
+        //  conn.query(sqlFindUser, function (err, rows) {
+
+        //     if (err) {
+        //         console.log("Error");
+        //         throw err;
+        //     } else {
+
+        //     }
+
+        //     //return res.json({'resul ':rows});
+        //     return console.log(rows);
+
+        // });
+
+         const result = await conn.query(sqlFindUser);        
+        
+            console.log(result);
+            res.json(result);
+            //Continuara
+
+
+        //res.json(respuesta);
+        // res.json({
+        //     code:201, 
+        //     respuesta:respuesta,           
+        //     Usuario :` ${email}`
+        // })
+
+    }catch(err){
+
+        console.log(`Error from api : ${err}`);
+        res.json({
+            Error: `Error from api : ${err}`
+        })
+
+    }finally{
+        if (conn) return conn.end();
+    }
 
 
 }

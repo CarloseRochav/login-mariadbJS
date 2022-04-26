@@ -42,25 +42,31 @@ app.get("/despedida",(req,res)=>{
     res.send("ADIOS AMIGO");
 })
 
-// about page
+
+
+//render page signUp
+app.get('/signup', function(req, res) {
+    res.render('signup');
+});
+
+//render page logIn
 app.get('/login', function(req, res) {
     res.render('login');
 });
 
-app.get('/signup', function(req, res) {
-    res.render('signup');
-});
 
 app.get('/secret',(req,res)=>{
     res.render('images')
 })
 
-app.post("/add-user",formController.sendUserCreated);
-// app.get("/add-user",async (req,res)=>{
-    
-//    await res.send("ADD USER");
+//SignUp
+app.post("/add-user",formController.sendUserCreated,async(req,res)=> res.redirect("/home"));//Terminada : Creo
+//Login User
+app.post("/log-user",formController.logUser,async(req,res)=> res.redirect("/home"));
 
-// });
+app.get("/home",async (req,res)=>{
+    await res.render("images");
+});
 
 
 app.listen(8181);
