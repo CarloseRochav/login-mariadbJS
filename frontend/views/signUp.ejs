@@ -1,0 +1,92 @@
+<div>    
+    <div class="form">
+        <form method="POST " id="form">
+            <div class="nombre">
+                <label for="">Nombre</label>
+                <input name="name" type="text">
+            </div>
+            <div class="apellido">
+                <label for="">Apellido</label>
+                <input type="text" name="lastname">
+            </div>
+            <div class="email">
+                <label for="">Ingrese su Correo</label>
+                <input type="email" name="email" placeholder="Ingrese su correo">
+            </div>
+            <div class="pass">
+                <label for="">Contraseña</label>
+                <input type="password" name="pass" placeholder="Ingrese Contraseña">
+            </div>
+            <div class="pass2">
+                <label for="">Confirmar Contraseña</label>
+                <input type="password">
+            </div>
+            <input type="submit" class="btn-submit">Ingresar</button>
+        </form>
+
+        <!--Script para enviar data desde el form ; capturar-->
+        <script>
+                    
+            const formSignup = document.getElementById("form");//Form Element
+            
+            
+            //Fucntion that Fetch 
+            const handleSubmit = async (e) => {    
+                    e.preventDefault();                    
+
+                    let name=formSignup.elements["name"].value;
+                    let lastname=formSignup.elements["lastname"].value;
+                    let email=formSignup.elements["email"].value;
+                    let password=formSignup.elements["pass"].value;
+                    
+                    const user = await {
+                        nombre:name,
+                        apellido:lastname,
+                        email:email,
+                        password:password
+                    };
+
+                    //const formData = new FormData(formSignup);
+                    //const formDataSerialized = Object.fromEntries(user);
+                    const jsonObject = {
+                        ...user,
+                        sendToSelf: user.sendToSelf ? true : false,
+                    };
+
+                    const userClear = JSON.stringify(jsonObject);                    
+
+                        try {
+                            const response = await fetch('http://localhost:8080/users', {
+
+                                method: 'POST',
+                                body: userClear,
+                                headers: {
+                                    'Accept': 'application/json',
+                                    'Content-Type': 'application/json'
+                                },
+                            });
+
+                        const json = await response.json();
+                        await console.log(`Valores ${userClear}`)
+                        console.log(json);
+
+                        } catch (e) {
+                        console.log(`Hay error : ${e}`);
+                        console.log(JSON.stringify(jsonObject));
+                        //Objeto de datos aislados
+                        console.log(`Valores ${user}`)
+                        alert(`Error ${e}`);
+                        }                    
+                };                     
+
+                
+                //Evento
+        formSignup.addEventListener('submit', handleSubmit);
+    
+                
+                //PENDIENTEE LOGRAR EL POST                                                
+    </script>
+        <!-- <script src="../src/controllers/form.js"></script> -->
+        
+    </div>
+</div>
