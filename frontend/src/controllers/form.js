@@ -1,65 +1,93 @@
 
+
+const fetch = require("node-fetch");
 const form={};
+
 const api = "http://localhost:8080"
 
-form.sendUserCreated=async (data)=>{
+form.sendUserCreated=async (req,res)=>{
 
     const pathCreateUser = api+"/users";
-    //const data = new FormData(document.getElementById('registerUser'));
+    //const formSignup = document.getElementById("form");//Form Element
+    const {name,lastname,email,pass} = await req.body; //Extrayendo del body del form
+
+    console.log({
+        msg:"Si llego",
+        nombre: name,
+        apellido: lastname,
+        correo: email,
+        contrasenia : pass
+    });
+            
+        //const [name,lastname,email,password] = data;
+            //Fucntion that Fetch 
+            // const handleSubmit = async (e) => {    
+            //         e.preventDefault();                    
+
+                    // let name=formSignup.elements["name"].value;
+                    // let lastname=formSignup.elements["lastname"].value;
+                    // let email=formSignup.elements["email"].value;
+                    // let password=formSignup.elements["pass"].value;                    
+                    
+                    const user = await {
+                        nombre:name,
+                        apellido:lastname,
+                        email:email,
+                        password:pass
+                    };
+
+                    console.log(user + "Finally")
+
+                    //const formData = new FormData(formSignup);
+                    //const formDataSerialized = Object.fromEntries(user);
+                    const jsonObject = {
+                        ...user,
+                        sendToSelf: user.sendToSelf ? true : false,
+                    };                   
+
+                    const userClear = JSON.stringify(jsonObject);     
+                    
+                    console.log(userClear + " Stringify")
+                    
+                        try {
+                            const response = await fetch("http://localhost:8080/users", {
+
+                                method: 'POST',
+                                body: userClear,
+                                headers: {
+                                    'Accept': 'application/json',
+                                    'Content-Type': 'application/json'
+                                },
+                            });
+
+                            const json = await response.json();
+
+                            if(json.code==201)console.log("Usuario Registrado ");
+
+
+                            await console.log(`Valores ${userClear}`)
+                            res.json(userClear);
+                            console.log(json);
+                            console.log(`JSON CODE : ${json.code}`);
+
+                        } catch (e) {
+                        console.log(`Hay error response : ${e}`);
+                        res.json({
+                            Msg : `Error : ${e}`
+                        })
+                        console.log(JSON.stringify(jsonObject));
+                        //Objeto de datos aislados
+                        console.log(`Valores ${user} User`)
+                        //alert(`Error ${e}`);
+                        }                    
+//                };                     
+
+                
+                //Evento ; Elemento FORM
+        //formSignup.addEventListener('submit', handleSubmit);
     
-    // fetch(pathCreateUser, {
-    //     method: 'POST',
-    //     body: data
-    //  })
-    //  .then(function(response) {
-    //     if(response.ok) {
-    //         return response.text()
-    //     } else {
-    //         throw "Error en la llamada Ajax";
-    //     }
-     
-    //  })
-    //  .then(function(texto) {
-    //     console.log(texto);
-    //  })
-    //  .catch(function(err) {
-    //     console.log(err);
-
-    const formSignup = await document.getElementById("registerUser");
-    
-
-    formSignup.addEventListener('submit',(e)=>{
-
-            e.preventDefault();
-            const formData = new FormData(formSignup);
-            const formDataSerialized = Object.fromEntries(formData);
-            const jsonObject={
-                ...formDataSerialized,
-                sendToSelf:formDataSerialized.sendToSelf ? true :false,
-
-            };
-
-            try{
-
-                const response = await fetch(pathCreateUser,{
-    
-                    method:'POST',
-                    body:JSON.stringify(jsonObject),
-                    headers:{
-                        'Content-Type' : 'application/json'
-                    }    
-                });
-    
-                const json = await response.json();
-                if(json.code==201) console.log("Usuario Creado") ;
-                console.log(json);
-                alert("there as an error");
-    
-            }catch(e){
-                console.log(`Hay error : ${e}`);
-            }
-        })
+   
     
     }
 
-//module.exports=form;
+module.exports=form;

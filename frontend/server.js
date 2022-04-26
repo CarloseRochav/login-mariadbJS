@@ -6,6 +6,9 @@ const path = require("path");
 //Use Session
 const session = require('express-session');//Es necesario instalar
 
+//Controllers
+const formController = require("./src/controllers/form");
+
 
 //Para guardar sesion - LOGIN
 app.use(session({
@@ -51,6 +54,13 @@ app.get('/signup', function(req, res) {
 app.get('/secret',(req,res)=>{
     res.render('images')
 })
+
+app.post("/add-user",formController.sendUserCreated);
+// app.get("/add-user",async (req,res)=>{
+    
+//    await res.send("ADD USER");
+
+// });
 
 
 app.listen(8181);

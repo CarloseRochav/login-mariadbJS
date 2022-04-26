@@ -22,7 +22,7 @@ userController.createUser=async(req,res)=>{
         })
 
         res.json({
-            code:"201",
+            code:201,
             Usuario :` ${nombre} ${apellido}`,
             Email : ` ${email}`
         
@@ -32,7 +32,7 @@ userController.createUser=async(req,res)=>{
 
         console.log(`Error from api :${err}`);
         res.json({
-            code:"501",
+            code:501,
             msg:` Error from api : ${err}`
         })
     }finally {
