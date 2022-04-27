@@ -1,5 +1,6 @@
 //const { json } = require("express/lib/response");
 const pool = require("../../db/dbMaria");
+const mysql= require("mysql2");
 
 let userController={};
 
@@ -73,8 +74,9 @@ userController.logUser=async(req,res)=>{
 
     const {email,password}=await req.body;
 
-    const sqlFindUser = 'SELECT * FROM USERS WHERE EMAIL="'+email+'" AND PASSWORD="'+password+'"';    
+    const sqlFindUser =  "Select * from users where email = ? and password=?";    
 
+    console.log("Usuario solicidado : ")
     console.log({email,password,sqlFindUser});
 
     const conn = await pool.getConnection();
@@ -95,19 +97,46 @@ userController.logUser=async(req,res)=>{
 
         // });
 
-         const result = await conn.query(sqlFindUser);        
+        const userSql = mysql.format(sqlFindUser,[email,password]);
+
+        await conn.query(userSql, async(error,result)=>{
+
+            conn.release();
+
+
+            if (error) throw (error)
+            if (result.length == 0) {
+                console.log("--------> User does not exist")
+                res.sendStatus(404)
+               } 
+               else {
+                console.log("--------> Usuario Encontrado")
+                res.sendStatus(201)
+
+               }
+        })        
+        //const result = await conn.query(sqlFindUser);        
         
-            console.log(result);
-            res.json(result);
+
+
+            // if(result[0].id){
+            //      console.log(result[0]); //Objeto del Usuario
+            //      return res.json(result[0]);//No olvidar el return
+            // }
+            // if(result[0].id==null) {
+
+            //     console.log("Este usuario no existe"); //Objeto del Usuario
+            //     throw res.json({msg:"Usuario no existe"});//No olvidar el return
+            // }            
             //Continuara
 
 
         //res.json(respuesta);
-        // res.json({
-        //     code:201, 
-        //     respuesta:respuesta,           
-        //     Usuario :` ${email}`
-        // })
+        //  res.json({
+        //      code:201, 
+        //      respuesta:result2,           
+        //      Usuario :` ${email}`
+        //  })
 
     }catch(err){
 
@@ -128,5 +157,8 @@ userController.logUser=async(req,res)=>{
 //     const {nombre,apellido,email,password}= req.body;
 
 // }
+
+
+//Trabaar con el modulo de Mysql solo te permite usar promesas
 
 module.exports=userController;

@@ -119,11 +119,14 @@ form.logUser=async(req,res,next)=>{
                 },
             });
 
-            const json = await response.json();
-            //if(json.code==201)res.redirect("/home");
+            const jsonUserResponse = await response.json();
+            if(jsonUserResponse.id)res.redirect("/home"); //le falta configuracion
+            if(!jsonUserResponse.id) res.send("Este Usuario No existe");
+
             //console.log(`Valores ${userClear}`)
             //res.json(userClear);
-            console.log(json);
+            //si sale un elemento que dice json is undefined ; tal vez es porque no lo declaraste
+            console.log(jsonUserResponse);
             //console.log(`JSON CODE : ${json.code}`);
             //next();
 
